@@ -39,10 +39,10 @@ public class CartController {
 
         CartItem existingCartItem = cartService.getCartItemByFurnitureId(id);
         if (existingCartItem != null) {
-            // Item already exists in the cart; we should redirect to update quantity instead
+
             model.addAttribute("cartItem", existingCartItem);
         } else {
-            // Create a new cart item
+
             CartItem cartItem = new CartItem();
             cartItem.setFurniture(furniture);
             cartItem.setQuantity(1);
