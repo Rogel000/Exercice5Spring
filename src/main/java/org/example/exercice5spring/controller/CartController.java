@@ -39,10 +39,8 @@ public class CartController {
 
         CartItem existingCartItem = cartService.getCartItemByFurnitureId(id);
         if (existingCartItem != null) {
-
             model.addAttribute("cartItem", existingCartItem);
         } else {
-
             CartItem cartItem = new CartItem();
             cartItem.setFurniture(furniture);
             cartItem.setQuantity(1);
@@ -68,20 +66,27 @@ public class CartController {
         }
 
         CartItem existingCartItem = cartService.getCartItemByFurnitureId(furniture.getId());
-        if (existingCartItem != null) {
+        int newQuantity = cartItem.getQuantity();
 
-            existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItem.getQuantity());
-            if (furniture.getStock() < existingCartItem.getQuantity()) {
-                model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
-                return "cart/add";
+        if (existingCartItem != null) {
+            newQuantity += existingCartItem.getQuantity();
+        }
+
+        if (furniture.getStock() < newQuantity) {
+            model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
+            model.addAttribute("furnitures", furnitureService.getAllFurnitures());
+            if (existingCartItem != null) {
+                model.addAttribute("cartItem", existingCartItem);
+            } else {
+                model.addAttribute("cartItem", cartItem);
             }
+            return "cart/add";
+        }
+
+        if (existingCartItem != null) {
+            existingCartItem.setQuantity(newQuantity);
             cartService.saveCart(existingCartItem);
         } else {
-
-            if (furniture.getStock() < cartItem.getQuantity()) {
-                model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
-                return "cart/add";
-            }
             cartService.saveCart(cartItem);
         }
 

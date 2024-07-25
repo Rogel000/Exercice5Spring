@@ -14,8 +14,8 @@ public class FurnitureService {
         this.repository = repository;
     }
 
-    public Furniture saveFurniture(Furniture furniture) {
-        return repository.save(furniture);
+    public void saveFurniture(Furniture furniture) {
+        repository.save(furniture);
     }
 
     public List<Furniture> getAllFurnitures() {
@@ -33,8 +33,8 @@ public class FurnitureService {
         repository.deleteById(id);
     }
 
-    public Furniture updateFurniture(Furniture furniture) {
-        return repository.save(furniture);
+    public void updateFurniture(Furniture furniture) {
+        repository.save(furniture);
     }
 
 

@@ -31,6 +31,5 @@ public class Furniture {
     @Positive
     private Double price;
     @NotNull
-    @Positive
     private int stock;
 }
