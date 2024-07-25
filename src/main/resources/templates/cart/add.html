@@ -28,12 +28,12 @@
 <div class="container mt-5">
     <h1 class="mb-4">Add to Cart</h1>
 
-    <form th:action="@{/cart/add}" th:object="${cart}" method="post">
+    <form th:action="@{/cart/add}" th:object="${cartItem}" method="post">
         <input type="hidden" th:field="*{id}" />
         <div class="form-group">
             <label for="furniture">Furniture:</label>
             <select id="furniture" th:field="*{furniture.id}" class="form-control">
-                <option th:each="furniture : ${furniture}" th:value="${furniture.getId()}" th:text="${furniture.getName()}"></option>
+                <option th:each="furniture : ${furnitures}" th:value="${furniture.id}" th:text="${furniture.name}"></option>
             </select>
         </div>
         <div class="form-group">

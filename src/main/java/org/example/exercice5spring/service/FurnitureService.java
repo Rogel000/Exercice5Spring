@@ -17,17 +17,25 @@ public class FurnitureService {
     public Furniture saveFurniture(Furniture furniture) {
         return repository.save(furniture);
     }
+
     public List<Furniture> getAllFurnitures() {
         return repository.findAll();
     }
+
     public Furniture getFurnitureById(Long id) {
         return repository.findById(id).orElse(null);
     }
+
     public void deleteFurnitureById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("The given id must not be null");
         }
         repository.deleteById(id);
     }
+
+    public Furniture updateFurniture(Furniture furniture) {
+        return repository.save(furniture);
+    }
+
 
 }

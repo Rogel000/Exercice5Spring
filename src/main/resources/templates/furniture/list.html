@@ -36,6 +36,7 @@
             <th>Name</th>
             <th>Price</th>
             <th>Description</th>
+            <th>Stock</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -44,6 +45,7 @@
             <td th:text="${furniture.name}"></td>
             <td th:text="${furniture.price}"></td>
             <td th:text="${furniture.description}"></td>
+            <td th:text="${furniture.stock}"></td>
             <td>
                 <a th:href="@{/furniture/edit/{id}(id=${furniture.id})}" class="btn btn-warning btn-sm">Edit</a>
                 <a th:href="@{/furniture/delete/{id}(id=${furniture.id})}" onclick="return confirm('Are you sure?');" class="btn btn-danger btn-sm">Delete</a>
