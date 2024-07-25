@@ -25,15 +25,9 @@ public class CartController {
     @GetMapping("/cart")
     public String showCart(Model model) {
         List<CartItem> cartItems = cartService.getAllCartItems();
-        for (CartItem item : cartItems) {
-            if (item.getFurniture() == null) {
-                System.out.println("CartItem with ID " + item.getId() + " has no associated Furniture.");
-            }
-        }
         model.addAttribute("cart", cartItems);
         return "cart/list";
     }
-
 
     @GetMapping("/cart/add/{id}")
     public String addToCart(@PathVariable Long id, Model model) {
@@ -42,18 +36,22 @@ public class CartController {
             model.addAttribute("errorMessage", "Le meuble demandé n'existe pas.");
             return "redirect:/furniture";
         }
-        CartItem cartItem = new CartItem();
-        cartItem.setFurniture(furniture);
-        cartItem.setQuantity(1);
 
-        model.addAttribute("cartItem", cartItem);
+        CartItem existingCartItem = cartService.getCartItemByFurnitureId(id);
+        if (existingCartItem != null) {
+            // Item already exists in the cart; we should redirect to update quantity instead
+            model.addAttribute("cartItem", existingCartItem);
+        } else {
+            // Create a new cart item
+            CartItem cartItem = new CartItem();
+            cartItem.setFurniture(furniture);
+            cartItem.setQuantity(1);
+            model.addAttribute("cartItem", cartItem);
+        }
+
         model.addAttribute("furnitures", furnitureService.getAllFurnitures());
         return "cart/add";
     }
-
-
-
-
 
     @PostMapping("/cart/add")
     public String saveToCart(@Valid @ModelAttribute CartItem cartItem, BindingResult result, Model model) {
@@ -69,17 +67,28 @@ public class CartController {
             return "cart/add";
         }
 
-        if (furniture.getStock() < cartItem.getQuantity()) {
-            model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
-            return "cart/add";
+        CartItem existingCartItem = cartService.getCartItemByFurnitureId(furniture.getId());
+        if (existingCartItem != null) {
+            // Update the existing item
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItem.getQuantity());
+            if (furniture.getStock() < existingCartItem.getQuantity()) {
+                model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
+                return "cart/add";
+            }
+            cartService.saveCart(existingCartItem);
+        } else {
+            // Add a new item
+            if (furniture.getStock() < cartItem.getQuantity()) {
+                model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
+                return "cart/add";
+            }
+            cartService.saveCart(cartItem);
         }
 
-        cartService.saveCart(cartItem);
         furniture.setStock(furniture.getStock() - cartItem.getQuantity());
         furnitureService.updateFurniture(furniture);
         return "redirect:/cart";
     }
-
 
     @GetMapping("/cart/remove/{id}")
     public String removeFromCart(@PathVariable Long id) {
@@ -94,8 +103,6 @@ public class CartController {
         }
         return "redirect:/cart";
     }
-
-
 
     @GetMapping("/cart/clear")
     public String clearCart() {

@@ -37,4 +37,8 @@ public class CartService {
     public CartItem getCartItemById(Long id) {
         return repository.findById(id).orElse(null);
     }
+
+    public CartItem getCartItemByFurnitureId(Long furnitureId) {
+        return repository.findByFurnitureId(furnitureId);
+    }
 }
