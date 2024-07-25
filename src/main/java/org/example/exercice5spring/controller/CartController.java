@@ -69,7 +69,7 @@ public class CartController {
 
         CartItem existingCartItem = cartService.getCartItemByFurnitureId(furniture.getId());
         if (existingCartItem != null) {
-            // Update the existing item
+
             existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItem.getQuantity());
             if (furniture.getStock() < existingCartItem.getQuantity()) {
                 model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
@@ -77,7 +77,7 @@ public class CartController {
             }
             cartService.saveCart(existingCartItem);
         } else {
-            // Add a new item
+
             if (furniture.getStock() < cartItem.getQuantity()) {
                 model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
                 return "cart/add";
