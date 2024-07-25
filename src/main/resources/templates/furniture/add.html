@@ -1,10 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>Add/Edit Furniture</title>
 </head>
 <body>
-$END$
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Vente de Meubles</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/furniture/add">Ajouter Meuble</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/furniture">Nos Meubles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/cart">Panier</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h1 class="mb-4" th:text="${furniture.id == null ? 'Add Furniture' : 'Edit Furniture'}"></h1>
+
+    <form th:action="@{${furniture.id == null ? '/furniture/add' : '/furniture/edit'}}" th:object="${furniture}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" />
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" class="form-control" id="price" th:field="*{price}" />
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" class="form-control" id="description" th:field="*{description}" />
+        </div>
+
+        <div class="form-group">
+            <label for="quantité">Quantité:</label>
+            <input type="number" class="form-control" id="quantité" th:field="*{stock}" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/furniture" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

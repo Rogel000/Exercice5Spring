@@ -1,10 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vente de Meubles</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        .content {
+            flex: 1;
+        }
+        .hero-section {
+            background-image: url('https://source.unsplash.com/1600x900/?furniture');
+            background-size: cover;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        .hero-section p {
+            font-size: 1.25rem;
+        }
+        .feature-box {
+            text-align: center;
+            padding: 20px;
+        }
+        .feature-box i {
+            font-size: 3rem;
+            color: #007bff;
+        }
+        .feature-box h3 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        footer {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
-<body>
-$END$
+<body class="d-flex flex-column min-vh-100">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Vente de Meubles</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/furniture/add">Ajouter Meuble</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/furniture">Lister Meuble</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/cart">Panier</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="content">
+    <section class="hero-section">
+        <div class="container">
+            <h1>Bienvenue chez Vente de Meubles</h1>
+            <p>Découvrez nos meubles de qualité pour tous les styles et budgets.</p>
+            <a href="/furniture" class="btn btn-primary btn-lg">Voir Nos Meubles</a>
+        </div>
+    </section>
+
+    <section class="container mt-5">
+        <div class="row">
+            <div class="col-md-4 feature-box">
+                <i class="fas fa-couch"></i>
+                <h3>Meubles de Qualité</h3>
+                <p>Nous offrons une large sélection de meubles fabriqués avec des matériaux de haute qualité.</p>
+            </div>
+            <div class="col-md-4 feature-box">
+                <i class="fas fa-tag"></i>
+                <h3>Prix Compétitifs</h3>
+                <p>Nos prix sont compétitifs et nous offrons souvent des promotions intéressantes.</p>
+            </div>
+            <div class="col-md-4 feature-box">
+                <i class="fas fa-truck"></i>
+                <h3>Livraison Rapide</h3>
+                <p>Nous assurons une livraison rapide et fiable directement à votre porte.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer class="bg-light text-center py-3">
+    <p>&copy; 2024 Vente de Meubles. Tous droits réservés.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
