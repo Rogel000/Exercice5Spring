@@ -44,10 +44,10 @@ public class CartController {
         }
         CartItem cartItem = new CartItem();
         cartItem.setFurniture(furniture);
-        cartItem.setQuantity(1); // Initial quantity
+        cartItem.setQuantity(1);
 
         model.addAttribute("cartItem", cartItem);
-        model.addAttribute("furnitures", furnitureService.getAllFurnitures()); // Pass the list of furnitures
+        model.addAttribute("furnitures", furnitureService.getAllFurnitures());
         return "cart/add";
     }
 
