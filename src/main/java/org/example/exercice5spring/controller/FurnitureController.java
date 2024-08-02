@@ -8,71 +8,70 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
+@RequestMapping("/furniture")
 public class FurnitureController {
-    private final FurnitureService furnitureservice;
+    private final FurnitureService furnitureService;
     private static final Logger logger = LoggerFactory.getLogger(FurnitureController.class);
-    public FurnitureController(FurnitureService furnitureservice) {
-        this.furnitureservice = furnitureservice;
+
+    public FurnitureController(FurnitureService furnitureService) {
+        this.furnitureService = furnitureService;
     }
 
-
-    @GetMapping("/furniture")
+    @GetMapping
     public String allFurniture(Model model) {
-        List<Furniture> furnitures = furnitureservice.getAllFurnitures();
-        model.addAttribute("furnitures",furnitures);
+        List<Furniture> furnitures = furnitureService.getAllFurnitures();
+        model.addAttribute("furnitures", furnitures);
         return "furniture/list";
     }
 
-    @GetMapping("/furniture/add")
+    @GetMapping("/add")
     public String addFurniture(Model model) {
         model.addAttribute("furniture", new Furniture());
         return "furniture/add";
     }
-    @PostMapping("/furniture/add")
+
+    @PostMapping("/add")
     public String saveFurniture(@Valid @ModelAttribute("furniture") Furniture furniture, BindingResult result) {
         if (result.hasErrors()) {
             return "furniture/add";
         }
-        furnitureservice.saveFurniture(furniture);
+        furnitureService.saveFurniture(furniture);
         return "redirect:/furniture";
     }
 
-    @GetMapping("/furniture/edit/{id}")
-    public String editFurniture(@PathVariable Long id, Model model ) {
-        Furniture furniture = furnitureservice.getFurnitureById(id);
-        if (furniture == null) {
+    @GetMapping("/edit/{id}")
+    public String editFurniture(@PathVariable Long id, Model model) {
+        try {
+            Furniture furniture = furnitureService.getFurnitureById(id);
+            model.addAttribute("furniture", furniture);
+            return "furniture/add";
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
             return "redirect:/furniture";
         }
-        model.addAttribute("furniture", furniture);
-        return "furniture/add";
     }
 
-    @PostMapping("/furniture/edit")
+    @PostMapping("/edit")
     public String updateFurniture(@Valid @ModelAttribute("furniture") Furniture furniture, BindingResult result) {
         if (result.hasErrors()) {
             return "furniture/add";
         }
-        furnitureservice.saveFurniture(furniture);
+        furnitureService.saveFurniture(furniture);
         return "redirect:/furniture";
     }
 
-    @GetMapping("/furniture/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteFurniture(@PathVariable Long id) {
-        if (id == null) {
-            logger.error("The given id must not be null");
-            throw new IllegalArgumentException("The given id must not be null");
+        try {
+            furnitureService.deleteFurnitureById(id);
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
         }
-        logger.info("Deleting furniture with id: " + id);
-        furnitureservice.deleteFurnitureById(id);
         return "redirect:/furniture";
     }
-
 }

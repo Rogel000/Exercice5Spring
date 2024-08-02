@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@RequestMapping("/cart")
 public class CartController {
     private final CartService cartService;
     private final FurnitureService furnitureService;
@@ -22,94 +23,51 @@ public class CartController {
         this.furnitureService = furnitureService;
     }
 
-    @GetMapping("/cart")
+    @GetMapping
     public String showCart(Model model) {
         List<CartItem> cartItems = cartService.getAllCartItems();
         model.addAttribute("cart", cartItems);
         return "cart/list";
     }
 
-    @GetMapping("/cart/add/{id}")
+    @GetMapping("/add/{id}")
     public String addToCart(@PathVariable Long id, Model model) {
-        Furniture furniture = furnitureService.getFurnitureById(id);
-        if (furniture == null) {
-            model.addAttribute("errorMessage", "Le meuble demandé n'existe pas.");
-            return "redirect:/furniture";
-        }
-
-        CartItem existingCartItem = cartService.getCartItemByFurnitureId(id);
-        if (existingCartItem != null) {
-            model.addAttribute("cartItem", existingCartItem);
-        } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setFurniture(furniture);
-            cartItem.setQuantity(1);
+        try {
+            CartItem cartItem = cartService.prepareCartItemForAddition(id);
             model.addAttribute("cartItem", cartItem);
-        }
-
-        model.addAttribute("furnitures", furnitureService.getAllFurnitures());
-        return "cart/add";
-    }
-
-    @PostMapping("/cart/add")
-    public String saveToCart(@Valid @ModelAttribute CartItem cartItem, BindingResult result, Model model) {
-        Furniture furniture = furnitureService.getFurnitureById(cartItem.getFurniture().getId());
-        if (furniture == null) {
-            model.addAttribute("errorMessage", "Le meuble demandé n'existe pas.");
             model.addAttribute("furnitures", furnitureService.getAllFurnitures());
             return "cart/add";
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/furniture";
         }
+    }
 
+    @PostMapping("/add")
+    public String saveToCart(@Valid @ModelAttribute CartItem cartItem, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("furnitures", furnitureService.getAllFurnitures());
             return "cart/add";
         }
 
-        CartItem existingCartItem = cartService.getCartItemByFurnitureId(furniture.getId());
-        int newQuantity = cartItem.getQuantity();
-
-        if (existingCartItem != null) {
-            newQuantity += existingCartItem.getQuantity();
-        }
-
-        if (furniture.getStock() < newQuantity) {
-            model.addAttribute("errorMessage", "Quantité demandée dépasse le stock disponible.");
+        try {
+            cartService.saveCartItem(cartItem);
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("furnitures", furnitureService.getAllFurnitures());
-            if (existingCartItem != null) {
-                model.addAttribute("cartItem", existingCartItem);
-            } else {
-                model.addAttribute("cartItem", cartItem);
-            }
             return "cart/add";
         }
 
-        if (existingCartItem != null) {
-            existingCartItem.setQuantity(newQuantity);
-            cartService.saveCart(existingCartItem);
-        } else {
-            cartService.saveCart(cartItem);
-        }
-
-        furniture.setStock(furniture.getStock() - cartItem.getQuantity());
-        furnitureService.updateFurniture(furniture);
         return "redirect:/cart";
     }
 
-    @GetMapping("/cart/remove/{id}")
+    @GetMapping("/remove/{id}")
     public String removeFromCart(@PathVariable Long id) {
-        CartItem cartItem = cartService.getCartItemById(id);
-        if (cartItem != null) {
-            Furniture furniture = cartItem.getFurniture();
-            if (furniture != null) {
-                furniture.setStock(furniture.getStock() + cartItem.getQuantity());
-                furnitureService.updateFurniture(furniture);
-            }
-            cartService.deleteCart(id);
-        }
+        cartService.removeCartItem(id);
         return "redirect:/cart";
     }
 
-    @GetMapping("/cart/clear")
+    @GetMapping("/clear")
     public String clearCart() {
         cartService.clearCart();
         return "redirect:/cart";
